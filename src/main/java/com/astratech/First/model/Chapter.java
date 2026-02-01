@@ -14,7 +14,7 @@ public class Chapter {
     private Meaning meaning;
     private Summary summary;
 
-   Chapter(@JsonProperty("chapter_number") int chapter_number,
+  public Chapter(@JsonProperty("chapter_number") int chapter_number,
            @JsonProperty("verses_count")  int verses_count,
            @JsonProperty("name") String name,
            @JsonProperty("image") String image,
