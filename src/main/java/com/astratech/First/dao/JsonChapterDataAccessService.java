@@ -9,9 +9,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
 
 
 
@@ -19,41 +19,33 @@ import java.util.List;
 @Qualifier("jsonDao")
 public class JsonChapterDataAccessService implements ChapterDao {
 
-    private static final String FILE_PATH =
-            "src/main/resources/Data/chapters.json";
-
-    private static final String FILE_PATH_Shlok =
-            "src/main/resources/Data/shlok1.json";
-
     private final ObjectMapper mapper = new ObjectMapper();
+
+    private InputStream getFile() {
+        InputStream inputStream = getClass()
+                .getClassLoader()
+                .getResourceAsStream("Data/chapters.json");
+
+        if (inputStream == null) {
+            throw new RuntimeException("chapters.json not found");
+        }
+        return inputStream;
+    }
 
     @Override
     public int addChapter(Chapter chapter) {
-        try {
-            List<Chapter> chapters = getChapters();
-            chapters.add(chapter);
-            mapper.writeValue(new File(FILE_PATH), chapters);
-            return 1;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 0;
-        }
+        throw new UnsupportedOperationException(
+                "Cannot write to bundled JSON in production"
+        );
     }
 
     @Override
     public List<Chapter> getChapters() {
         try {
-            File file = new File(FILE_PATH);
-
-            if (!file.exists()) {
-                return new ArrayList<>();
-            }
-
             return mapper.readValue(
-                    file,
+                    getFile(),
                     new TypeReference<List<Chapter>>() {}
             );
-
         } catch (Exception e) {
             return new ArrayList<>();
         }
@@ -61,51 +53,24 @@ public class JsonChapterDataAccessService implements ChapterDao {
 
     @Override
     public Chapter getChapter(int chapterNumber) {
-        try {
-            File file = new File(FILE_PATH);
-
-            if (!file.exists()) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-            }
-
-            Chapter result = mapper.readValue(
-                    file,
-                    new TypeReference<List<Chapter>>() {}
-            ).stream().filter(chapter -> chapter.getChapter_number()==chapterNumber).findFirst().orElse(null);
-
-            if (result == null) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-            }else {
-                return result;
-            }
-
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
+        return getChapters()
+                .stream()
+                .filter(c -> c.getChapter_number() == chapterNumber)
+                .findFirst()
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.NOT_FOUND)
+                );
     }
 
     @Override
     public List<Chapter> queryChaptersByName(String name) {
-        try {
-            File file = new File(FILE_PATH);
-
-            if (!file.exists()) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-            }
-
-            List<Chapter> result = mapper.readValue(
-                    file,
-                    new TypeReference<List<Chapter>>() {}
-            ).stream().filter(chapter -> chapter.getSummary().getEn().contains(name)  ).toList();
-
-            if (result == null) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-            }else {
-                return result;
-            }
-
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
+        return getChapters()
+                .stream()
+                .filter(c ->
+                        c.getSummary().getEn()
+                                .toLowerCase()
+                                .contains(name.toLowerCase())
+                )
+                .toList();
     }
 }
