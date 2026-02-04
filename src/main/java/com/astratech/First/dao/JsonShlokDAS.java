@@ -20,59 +20,29 @@ public class JsonShlokDAS implements ShlokDao {
 
 
     private final ObjectMapper mapper  = new ObjectMapper();
-    private File getWritableFile() throws IOException {
-        File file = new File("src/main/resources/Data/shlok1.json");
+    private InputStream getFile() {
+        InputStream inputStream = getClass()
+                .getClassLoader()
+                .getResourceAsStream("Data/shlok1.json");
 
-        if (!file.exists()) {
-            file.getParentFile().mkdirs();
-            file.createNewFile();
-            mapper.writeValue(file, new ArrayList<Shlok>());
+        if (inputStream == null) {
+            throw new RuntimeException("chapters.json not found");
         }
-        return file;
+        return inputStream;
     }
 
     @Override
     public int addShlok(Shlok shlok) {
-        try{
-           File file = getWritableFile();
-            List<Shlok> shloks;
-           if(file.length()==0){
-              shloks = new ArrayList<>();
-           }else {
-               shloks = mapper.readValue(
-                       file,
-                       new TypeReference<List<Shlok>>() {}
-               );
-           }
-           shloks.add(shlok);
-            mapper.writeValue(file, shloks);
-
-
- return 1;
-
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-
-        }
-
+       throw  new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public List<Shlok> getAll() {
         try {
-
-            File file = getWritableFile();
-            List<Shlok> shloks;
-            if (file.length()==0){
-                shloks = new ArrayList<>();
-            }else {
-                shloks=mapper.readValue(
-                        file,
-                        new TypeReference<List<Shlok>>(){}
-                );
-            }
-            return shloks;
+            return mapper.readValue(
+                    getFile(),
+                    new TypeReference<List<Shlok>>() {}
+            );
         }catch (Exception e){
             throw new RuntimeException(e);
         }
@@ -82,17 +52,8 @@ public class JsonShlokDAS implements ShlokDao {
     @Override
     public Shlok getShloksByNumber(int chapter,int verse) {
         try {
+            List<Shlok> shloks=getAll();
 
-            File file = getWritableFile();
-            List<Shlok> shloks;
-            if (file.length()==0){
-                shloks = new ArrayList<>();
-            }else {
-                shloks=mapper.readValue(
-                        file,
-                        new TypeReference<List<Shlok>>(){}
-                );
-            }
             return shloks.stream().filter(shlok -> (shlok.getVerse()==verse&&shlok.getChapter()==chapter)).findFirst().orElse(null);
 
         }catch (Exception e){
@@ -104,16 +65,12 @@ public class JsonShlokDAS implements ShlokDao {
     @Override
     public List<Shlok> getShloksByChapter(int chapter) {
        try {
-           File file = getWritableFile();
-           List<Shlok> shloks;
-           if (file.length()==0){
-               shloks = new ArrayList<>();
-               return shloks;
-           }else {
-               shloks=mapper.readValue(file,
-                       new TypeReference<List<Shlok>>(){});
+
+           List<Shlok> shloks=getAll();
+
+
                return shloks.stream().filter(verse->(verse.getChapter()==chapter)).toList();
-           }
+
 
 
        }catch (Exception e){
