@@ -33,8 +33,26 @@ public class JsonShlokDAS implements ShlokDao {
 
     @Override
     public int addShlok(Shlok shlok) {
-       throw  new UnsupportedOperationException("Not supported yet.");
+
+
+        return 1;
     }
+
+//    private File getOrCreateFileWithJsonArray(String path) throws IOException {
+//
+//        File file = new File(path);
+//
+//        if (file.getParentFile() != null && !file.getParentFile().exists()) {
+//            file.getParentFile().mkdirs();
+//        }
+//
+//        if (!file.exists()) {
+//            file.createNewFile();
+//
+//        }
+//
+//        return file;
+//    }
 
     @Override
     public List<Shlok> getAll() {
@@ -52,9 +70,9 @@ public class JsonShlokDAS implements ShlokDao {
     @Override
     public Shlok getShloksByNumber(int chapter,int verse) {
         try {
-            List<Shlok> shloks=getAll();
+            List<Shlok> shloks=getShloksByChapter(chapter);
 
-            return shloks.stream().filter(shlok -> (shlok.getVerse()==verse&&shlok.getChapter()==chapter)).findFirst().orElse(null);
+            return shloks.stream().filter(shlok -> (shlok.getVerse()==verse)).findFirst().orElse(null);
 
         }catch (Exception e){
             throw new RuntimeException(e);
@@ -65,11 +83,18 @@ public class JsonShlokDAS implements ShlokDao {
     @Override
     public List<Shlok> getShloksByChapter(int chapter) {
        try {
+           InputStream inputStream = getClass()
+                   .getClassLoader()
+                   .getResourceAsStream("Data/shlok_"+chapter+".json");
 
-           List<Shlok> shloks=getAll();
+           if (inputStream == null) {
+               throw new RuntimeException("chapters.json not found");
+           }
+           List<Shlok> shloks=mapper.readValue(inputStream
+           ,new  TypeReference<List<Shlok>>() {});
 
 
-               return shloks.stream().filter(verse->(verse.getChapter()==chapter)).toList();
+           return shloks.stream().filter(verse->(verse.getChapter()==chapter)).toList();
 
 
 
