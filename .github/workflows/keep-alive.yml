@@ -8,8 +8,8 @@ on:
 jobs:
   ping:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Ping Render App
-        run: |
-          curl -s https://gita-api-1.onrender.com/chapter/health
+      - name: Ping Backend
+        run: curl -I https://gita-api-1.onrender.com/chapter/health
+
+
