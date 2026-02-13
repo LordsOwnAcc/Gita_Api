@@ -14,6 +14,10 @@ import java.util.List;
 public class ChapterController {
     private final ChapterService chapterService;
 
+    @GetMapping("/health")
+    public String health() {
+        return "OK";
+    }
     @Autowired
     public ChapterController(ChapterService chapterService) {
         this.chapterService = chapterService;
