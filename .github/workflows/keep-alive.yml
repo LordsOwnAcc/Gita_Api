@@ -10,6 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Ping Backend
-        run: curl -I https://gita-api-1.onrender.com/chapter/health
+        run: curl -I https://gita-api-1.onrender.com/health
 
 
