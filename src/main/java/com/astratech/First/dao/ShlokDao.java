@@ -13,6 +13,9 @@ public interface ShlokDao {
 
    List<Shlok> getShloksByChapter(int chapter);
 
+   List<Shlok> getShloksBySearch(String search);
+
+
 
 
 }

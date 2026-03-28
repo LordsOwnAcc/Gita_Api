@@ -102,5 +102,22 @@ public class JsonShlokDAS implements ShlokDao {
            throw new RuntimeException(e);
        }
     }
+
+    @Override
+    public List<Shlok> getShloksBySearch(String search) {
+        try {
+       List<Shlok> map= mapper.readValue(
+                    getFile(),
+                    new TypeReference<List<Shlok>>() {}
+            );
+       return map.stream().filter(shlok-> ( shlok.getSlok()==search||shlok.getTransliteration()==search)).toList();
+
+
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }
+    }
+
+
 }
 

@@ -28,6 +28,9 @@ public class Shlok1Service {
     public List<Shlok> getShlokByChapter(int chapter) {
         return shlokDao.getShloksByChapter(chapter);
     }
+    public  List<Shlok> getShlokBySearch(String search) {
+        return shlokDao.getShloksBySearch(search);
+    }
 
 
 }

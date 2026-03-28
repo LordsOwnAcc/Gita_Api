@@ -33,6 +33,10 @@ private final Shlok1Service shlok1Service;
     public List<Shlok> getShloksByChapter(@PathVariable int chapter) {
         return shlok1Service.getShlokByChapter(chapter);
     }
+    @GetMapping("/search/{search}")
+    public List<Shlok> getShloksBySearch(@PathVariable String search) {
+        return shlok1Service.getShlokBySearch(search);
+    }
 
 
 }
