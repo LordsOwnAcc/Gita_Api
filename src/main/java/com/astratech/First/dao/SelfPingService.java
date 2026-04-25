@@ -17,6 +17,10 @@ public class SelfPingService {
                     "https://gita-api-1.onrender.com/health",
                     String.class
             );
+            String response2 = restTemplate.getForObject(
+                    "https://gitaapi-frontend.onrender.com",
+                    String.class
+            );
 
             System.out.println("Self ping successful: " + response);
 
